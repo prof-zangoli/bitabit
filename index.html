@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movies</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .movie { margin-bottom: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+    .movie img { max-width: 100px; float: left; margin-right: 15px; }
+    .movie h3 { margin: 0; }
+    .clear { clear: both; }
+  </style>
+</head>
+<body>
+  <h1>Movies</h1>
+  <input type="text" id="searchTitle" placeholder="Search by title" />
+  <input type="number" id="searchYear" placeholder="Filter by year" />
+  <button onclick="fetchMovies()">Search</button>
+
+  <div id="movies"></div>
+
+  <script>
+    async function fetchMovies() {
+      const title = document.getElementById('searchTitle').value;
+      const year = document.getElementById('searchYear').value;
+      let query = '';
+      if (title) query += `title=${title}&`;
+      if (year) query += `year=${year}`;
+      const response = await fetch(`http://localhost:3000/movies?${query}`);
+      const movies = await response.json();
+      const moviesDiv = document.getElementById('movies');
+      moviesDiv.innerHTML = movies.map(movie => `
+        <div class="movie">
+          <img src="${movie.poster || 'https://via.placeholder.com/100'}" alt="${movie.title}" />
+          <h3>${movie.title} (${movie.year})</h3>
+          <p>${movie.plot || 'No description available.'}</p>
+          <div class="clear"></div>
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>
